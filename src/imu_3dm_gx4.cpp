@@ -26,6 +26,8 @@ Imu::Info info;
 Imu::DiagnosticFields fields;
 bool enableMagnetometer;
 
+Imu::FilterData filterData;
+
 //  diagnostic_updater resources
 std::shared_ptr<diagnostic_updater::Updater> updater;
 std::shared_ptr<diagnostic_updater::TopicDiagnostic> imuDiag;
@@ -36,7 +38,7 @@ void publishData(const Imu::IMUData &data) {
   sensor_msgs::MagneticField field;
   sensor_msgs::FluidPressure pressure;
 
-  //  assume we have all of these since they were requested
+//   //  assume we have all of these since they were requested
   /// @todo: Replace this with a mode graceful failure...
   assert(data.fields & Imu::IMUData::Accelerometer);
   assert(data.fields & Imu::IMUData::Barometer);
@@ -56,6 +58,11 @@ void publishData(const Imu::IMUData &data) {
     field.header.frame_id = frameId;
   }
 
+  
+  imu.orientation.w = filterData.quaternion[0];
+  imu.orientation.x = filterData.quaternion[1];
+  imu.orientation.y = filterData.quaternion[2];
+  imu.orientation.z = filterData.quaternion[3];
   imu.orientation_covariance[0] =
       -1; //  orientation data is on a separate topic
 
@@ -94,6 +101,7 @@ void publishFilter(const Imu::FilterData &data) {
   imu_3dm_gx4::FilterOutput output;
   output.header.stamp = ros::Time::now();
   output.header.frame_id = frameId;
+  filterData = data;
   output.orientation.w = data.quaternion[0];
   output.orientation.x = data.quaternion[1];
   output.orientation.y = data.quaternion[2];
