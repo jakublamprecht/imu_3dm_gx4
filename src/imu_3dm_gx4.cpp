@@ -198,14 +198,14 @@ int main(int argc, char **argv) {
     return -1;
   }
   
-  pubIMU = nh.advertise<sensor_msgs::Imu>("imu", 1);
-  pubPressure = nh.advertise<sensor_msgs::FluidPressure>("pressure", 1);
+  pubIMU = nh.advertise<sensor_msgs::Imu>("/microstrain/imu", 1);
+  pubPressure = nh.advertise<sensor_msgs::FluidPressure>("/microstrain/pressure", 1);
 
   if (enableMagnetometer) {
-    pubMag = nh.advertise<sensor_msgs::MagneticField>("magnetic_field", 1);
+    pubMag = nh.advertise<sensor_msgs::MagneticField>("/microstrain/magnetic_field", 1);
   }
   if (enableFilter) {
-    pubFilter = nh.advertise<imu_3dm_gx4::FilterOutput>("filter", 1);
+    pubFilter = nh.advertise<imu_3dm_gx4::FilterOutput>("/microstrain/filter", 1);
   }
 
   //  new instance of the IMU
